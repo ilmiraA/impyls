@@ -1,0 +1,51 @@
+from google.colab import drive
+drive.flush_and_unmount()
+drive.mount('/content/drive')
+
+import pandas as pd
+
+data = pd.read_csv('drive/My Drive/2_5221953742512854245.csv')
+
+import pandas
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set()
+
+!pip install xgboost
+
+from sklearn.tree import DecisionTreeClassifier
+
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
+
+from xgboost import XGBClassifier
+from sklearn.model_selection import KFold
+
+x=data.drop(['DXNORM'], axis=1)[['CDGLOBAL', 'DXMCI', 'LDELTOTAL', 'HMT40', 'RCT6', 'RCT20', 'RCT392', 'MH4CARD', 'LIMMTOTAL', 'DXAD']]
+y=data['DXNORM']
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+
+metrics1=[]
+metrics2=[]
+metrics3=[]
+metrics4=[]
+for train_index, test_index in kf.split(x):
+  x_train, x_test = x.values[train_index], x.values[test_index]
+  y_train, y_test = y.values[train_index], y.values[test_index]
+
+  xgb_model = XGBClassifier(max_depth=40, n_estimators=50, learning_rate=0.05)
+  xgb_model.fit(x_train, y_train)
+  xgb_predict = xgb_model.predict(x_test)
+
+  metrics1.append(accuracy_score(y_test, xgb_predict))
+  metrics2.append(precision_score(y_test, xgb_predict))
+  metrics3.append(recall_score(y_test, xgb_predict))
+  metrics4.append(f1_score(y_test, xgb_predict, average='macro'))
+
+
+print(np.mean(metrics1))
+print(np.mean(metrics2))
+print(np.mean(metrics3))
+print(np.mean(metrics4))
