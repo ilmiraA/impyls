@@ -1,0 +1,22 @@
+from google.colab import drive
+drive.flush_and_unmount()
+drive.mount('/content/drive')
+
+import pandas as pd
+
+data = pd.read_csv('drive/My Drive/2_5221953742512854245.csv')
+
+import pandas
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set()
+
+!pip install xgboost
+
+from sklearn.tree import DecisionTreeClassifier
+
+corr=data.corr()
+plt.figure(figsize=(30,30))
+sns.heatmap(corr,
+            xticklabels=corr.columns,
+            yticklabels=corr.columns)
