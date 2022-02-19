@@ -1,0 +1,50 @@
+from google.colab import drive
+drive.flush_and_unmount()
+drive.mount('/content/drive')
+
+import pandas as pd
+
+data = pd.read_csv('drive/My Drive/2_5221953742512854245.csv')
+
+import pandas
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set()
+
+!pip install xgboost
+
+from sklearn.tree import DecisionTreeClassifier
+
+data.drop(['Unnamed: 0', 'DXCURREN'], inplace=True, axis=1)
+
+x=data.drop(['DXNORM'], axis=1)
+y=data['DXNORM']
+
+from sklearn.model_selection import train_test_split
+import numpy as np
+np.random.seed(42)
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3)
+
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
+
+from sklearn.tree import DecisionTreeClassifier
+
+tree =DecisionTreeClassifier()
+tree.fit(x_train, y_train)
+tree_prediction = tree.predict(x_test)
+
+# for elem in tree_prediction:
+#   if elem == 1:
+
+tree_importance = tree.feature_importances_
+
+tree_importance = pd.Series(data=tree_importance, index=x.columns)
+good = tree_importance[tree_importance>.0]
+
+tree = DecisionTreeClassifier(max_depth=2)
+tree.fit(x_train, y_train)
+tree_prediction = tree.predict(x_test)
